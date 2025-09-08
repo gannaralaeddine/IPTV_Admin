@@ -6,7 +6,6 @@ const SeriesStreams = () => {
     const [formData, setFormData] = useState({
         name: '',
         category_id: '',
-        file: null,
         stream_icon: '',
         added: ''
     });
@@ -30,21 +29,17 @@ const SeriesStreams = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = new FormData();
-            data.append('name', formData.name);
-            data.append('category_id', formData.category_id);
-            if (formData.file) {
-                data.append('file', formData.file);
-            } else if (!editingId) {
-                throw new Error('File is required for new streams');
-            }
-            data.append('stream_icon', formData.stream_icon || '');
-            data.append('added', formData.added || new Date().toISOString());
+            const payload = {
+                name: formData.name,
+                category_id: formData.category_id,
+                stream_icon: formData.stream_icon || '',
+                added: formData.added || new Date().toISOString()
+            };
 
             if (editingId) {
-                await SeriesAPI.put(`/update-series-stream/${editingId}`, data);
+                await SeriesAPI.put(`/update-series-stream/${editingId}`, payload);
             } else {
-                await SeriesAPI.post('/create-series-stream', data);
+                await SeriesAPI.post('/create-series-stream', payload);
             }
             await fetchStreams();
             resetForm();
@@ -57,7 +52,6 @@ const SeriesStreams = () => {
         setFormData({
             name: stream.name,
             category_id: stream.category_id,
-            file: null, // File input should be re-selected
             stream_icon: stream.stream_icon || '',
             added: stream.added ? new Date(stream.added).toISOString().slice(0, 16) : ''
         });
@@ -79,7 +73,6 @@ const SeriesStreams = () => {
         setFormData({
             name: '',
             category_id: '',
-            file: null,
             stream_icon: '',
             added: ''
         });
@@ -89,12 +82,12 @@ const SeriesStreams = () => {
 
     return (
         <div>
-            <h2>Manage Series Streams</h2>
+            <h2>Manage Series</h2>
             {error && <div className="alert alert-danger">{error}</div>}
-            <form onSubmit={handleSubmit} className="mb-3" encType="multipart/form-data">
+            <form onSubmit={handleSubmit} className="mb-3">
                 <input
                     type="text"
-                    placeholder="Stream Name"
+                    placeholder="Series Name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="form-control mb-2"
@@ -106,15 +99,10 @@ const SeriesStreams = () => {
                     onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                     className="form-control mb-2"
                     required />
-                <input
-                    type="file"
-                    accept=".ts,.m3u8,.mp4"
-                    onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
-                    className="form-control mb-2"
-                    required={!editingId} />
+                
                 <input
                     type="text"
-                    placeholder="Stream Icon URL (optional)"
+                    placeholder="Series Icon URL (optional)"
                     value={formData.stream_icon}
                     onChange={(e) => setFormData({ ...formData, stream_icon: e.target.value })}
                     className="form-control mb-2" />
@@ -132,7 +120,7 @@ const SeriesStreams = () => {
                     <th>Series ID</th>
                     <th>Name</th>
                     <th>Category ID</th>
-                    <th>File</th>
+                    
                     <th>Icon</th>
                     <th>Added</th>
                     <th>Actions</th>
@@ -144,7 +132,7 @@ const SeriesStreams = () => {
                         <td>{stream.series_id}</td>
                         <td>{stream.name}</td>
                         <td>{stream.category_id}</td>
-                        <td>{stream.file}</td>
+                        
                         <td>{stream.stream_icon || '-'}</td>
                         <td>{stream.added ? new Date(stream.added).toLocaleString() : '-'}</td>
                         <td>

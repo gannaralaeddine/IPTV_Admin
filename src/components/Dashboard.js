@@ -10,7 +10,7 @@ const Dashboard = () => (
             <li className="list-group-item"><Link to="/vod-categories">Manage VOD Categories</Link></li>
             <li className="list-group-item"><Link to="/vod-streams">Manage VOD Streams</Link></li>
             <li className="list-group-item"><Link to="/series-categories">Manage Series Categories</Link></li>
-            <li className="list-group-item"><Link to="/series-streams">Manage Series Streams</Link></li>
+            <li className="list-group-item"><Link to="/series-streams">Manage Series</Link></li>
             <li className="list-group-item"><Link to="/seasons">Manage Seasons</Link></li>
             <li className="list-group-item"><Link to="/episodes">Manage Episodes</Link></li>
         </ul>
